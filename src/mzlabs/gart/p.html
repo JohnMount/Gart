@@ -1,0 +1,328 @@
+<html>
+  <head>
+      <title>geneticArt III</title>
+
+    <SCRIPT LANGUAGE="JavaScript">
+    var isnetscape = false;
+    var ismicrosoft = false;
+    var isother = false;
+    var mywidth = 100;
+    var myheight = 80;
+    var nacross = 5;
+    var ndown = 2;
+    var didset = false;
+
+    // code to get around Microsoft/Netscape incompatibilities
+    if(navigator.appName.indexOf("Netscape")>=0) {
+       isnetscape = true;
+    } else  if(navigator.appName.indexOf("Microsoft")>=0) {
+       ismicrosoft = true;
+    } else {
+       isother = true;
+    }
+
+    function setsizes() {
+      setTimeout("setsizes2();",1000);
+    }
+    function setsizes2()
+    {
+        if(!didset) {
+	   var i;
+	   var j;
+	   var sname;
+           for(i = 0; i<ndown ; ++i) {
+	      for(j = 0; j<nacross ; ++j) {
+	         sname = 'gpic_' + i + '_' + j;
+	         document[sname].setwidthheight(mywidth, myheight);
+	      }
+	   }
+	   didset = true;
+       }
+    }
+    // code to get around Microsoft/Netscape incompatibilities
+    function write_applet_tag(instname,classname,jarname,
+       awidth,aheight)
+    {
+     if(ismicrosoft) {
+      document.write(
+	'<OBJECT CODETYPE="application/java" ' + 
+	   'ARCHIVE="' + jarname + '" ' + 
+	   'NAME="' + instname + '" ' + 
+	   'CODE="' + classname + '" ' + 
+	   'WIDTH=' + awidth + ' HEIGHT=' + aheight + '>\n' +
+	'</OBJECT>\n');
+     } else if(isnetscape) {
+//  They say to use embed with netscape- but it crashes my browser
+      document.write(
+	'<APPLET ' +
+	   'ARCHIVE="' + jarname + '" ' + 
+	   'NAME="' + instname + '" ' + 
+	   'CODE="' + classname + '" ' + 
+	   'WIDTH=' + awidth + ' HEIGHT=' + aheight + '>\n' +
+	'</APPLET>\n');
+     } else {
+      document.write(
+	'<APPLET ' +
+	   'ARCHIVE="' + jarname + '" ' + 
+	   'NAME="' + instname + '" ' + 
+	   'CODE="' + classname + '" ' + 
+	   'WIDTH=' + awidth + ' HEIGHT=' + aheight + '>\n' +
+	'</APPLET>\n');
+     }
+    }
+    function print_app(i,j)
+    {
+     var sname = 'gpic_' + i + '_' + j;
+     document.write(
+        '<TD>\n' +
+	'<TABLE>\n' +
+	'<TR>\n' +
+	'<TD>\n');
+     write_applet_tag(sname,'gpic.class','g3.jar',mywidth,myheight);
+     document.write(
+	'</TD>\n' +
+	'</TR>\n' +
+	'<TR>\n' +
+	'<TD>\n' +
+	'<INPUT TYPE=radio NAME="RADIOA"' +
+	   'onclick="document.mainform.aform.value = document.' +
+	   sname + '.getFormula();">\n' +
+	'<INPUT TYPE=radio NAME="RADIOB"' +
+	   'onclick="document.mainform.bform.value = document.' +
+	   sname + '.getFormula();">\n' +
+	'<INPUT TYPE=button VALUE="X" ' +
+	   'onclick="document.' + sname + '.offspring(' +
+                       'document.mainform.aform.value,' +
+                       'document.mainform.bform.value); ' +
+		       'document.mainform.zform.value = document.' +
+		       sname + '.getFormula();">\n' +
+	'</TD>\n' +
+	'</TR>\n' +
+	'</TABLE>\n' +
+	'</TD>\n');
+    }
+    // print zap buttons
+    function print_zap(i,j)
+    {
+     var zname = 'Z_' + i + '_' + j;
+     var sname = 'gpic_' + i + '_' + j;
+     document.write(
+        '<TD>\n' +
+	'<INPUT TYPE=button VALUE="' + zname + '" ' +
+	   'onclick="document.' + sname + '.setformula(' +
+                       'document.mainform.zform.value);">\n' +
+	'</TD>\n');
+    }
+    // print r-row by c-column table
+    function print_tab(r,c,pics)
+    {
+        var i;
+	var j;
+        document.write('<TABLE>\n');
+        for(i = 0; i<r ; ++i) {
+	   document.write('<TR>\n');
+	   for(j = 0; j<c ; ++j) {
+	       if(pics) {
+	       	  print_app(i,j);
+	       } else {
+	       	  print_zap(i,j);
+               }
+	   }
+	   document.write('</TR>\n');
+	}
+	document.write('</TABLE>\n');
+    }
+    </SCRIPT>
+
+  </head>
+
+  <body onLoad="setsizes();">
+    <h1>geneticArt III</h1>
+      <P>
+      When this page is ready you should see 
+      <SCRIPT>
+      document.write(' ' + nacross * ndown);
+      </SCRIPT>
+      pictures.  Under each
+      picture are two radio buttons and an "X".  This page produces
+      "art" genetically.  To create a new picture select two parents using
+      the radio buttons.  Then select a picture to replace with
+      the new offspring by pressing an "X".
+      </P>
+      <P>
+      This page is by 
+      <A HREF="http://www.cs.cmu.edu/~jmount">John Mount</A>
+      (<A HREF="mailto:ja_mount@pacbell.net">ja_mount@pacbell.net</A>)
+      and is based on the 
+      International Genetic Art II site (by 
+      <A HREF="http://www.cs.cmu.edu/~jmount">John Mount</A>,
+<a href="http://www.cs.cmu.edu/afs/cs/user/wsr/Web/homepage.html">Scott Neal Reilly</a>
+      and
+      <A HREF="http://www.cs.cmu.edu/~mjw">Michael Witbrock</A>).
+      </P>
+      <P>
+      See below for more information.
+      </P>
+
+      <hr>
+
+    <FORM NAME="mainform">
+
+    <SCRIPT LANGUAGE="JavaScript">
+    print_tab(ndown,nacross,true);
+    </SCRIPT>
+
+    <br>
+
+    <TABLE>
+    <TR>
+
+    <TD>
+    <TABLE>
+    <TR>
+    <TD>
+    Parent1
+    </TD>
+    </TR>
+    <TR>
+    <TD>
+    <TEXTAREA NAME="aform" ROWS="5" COLS="30" WRAP="virtual">
+    </TEXTAREA>
+    </TD>
+    </TR>
+    </TABLE>
+    </TD>
+
+    <TD>
+    <TABLE>
+    <TR>
+    <TD>
+    Parent2
+    </TD>
+    </TR>
+    <TR>
+    <TD>
+    <TEXTAREA NAME="bform" ROWS="5" COLS="30" WRAP="virtual">
+    </TEXTAREA>
+    </TD>
+    </TR>
+    </TABLE>
+    </TD>
+
+    </TR>
+    </TABLE>
+
+      <hr>
+      This section of the form usually contains the formula for
+      the last result, but can also be used to type in formulae
+      and replace any picture.
+
+    <TABLE>
+    <TR>
+    <TD>
+    <SCRIPT LANGUAGE="JavaScript">
+    print_tab(ndown,nacross,false);
+    </SCRIPT>
+    </TD>
+    <TD>
+    <TEXTAREA NAME="zform" ROWS="5" COLS="30" WRAP="virtual">
+    </TEXTAREA>
+    </TR>
+    </TABLE>
+
+    </FORM>
+      <hr>
+
+
+<H2>Description</H2>
+
+<P>This page is based on the 
+International Genetic Art II site 
+(by
+      <A HREF="http://www.cs.cmu.edu/~jmount">John Mount</A>,
+<a href="http://www.cs.cmu.edu/afs/cs/user/wsr/Web/homepage.html">Scott Neal Reilly</a>
+      and
+      <A HREF="http://www.cs.cmu.edu/~mjw">Michael Witbrock</A>)
+which ran from 1994 through 1996
+(the <a href="http://www.geneticart.org">current site</a> seems to be stuck).
+This site, in turn, was inspired by
+the work of <a href="http://www.cs.cmu.edu/afs/cs/user/wsr/Web/homepage.html">Scott Neal Reilly</a> which itself drew inspiration from 
+Karl Sims.  The International Genetic Art II site was a very early example
+of CGI scripts and HTML forms, which at the time were the only methods
+available to produce interactive web pages.  The central site allowed
+a consistent view (different users saw the same picture) and primative
+collaboration (every user voted and votes affected everybody).
+Some of the best pictures were photo-reproduced and displayed in
+"The Coffee Tree" cafe in Pittsburgh PA.
+This version is written in Java and driven by a JavaScript interface
+directly in the user's browser.  This allows a much more reactive user
+interface and removes the need for a central site.  However, without a central
+site or protocol the system does not allow collaboration or learning.
+
+<P>This page uses a genetic algorithm to create art (or, at least,
+pretty pictures).
+The "genetic" algorithm used is quite simple (and arbitrary):
+<blockquote>
+To breed two formulae a random subexpression of one is replaced
+by a random subexpression of the other (the random subexpressions are
+selected uniformly from all subexpressions of the parse-tree of the
+formula).  Finally, mutation is applied which changes one of the operations
+in the formula.  
+</blockquote>
+Sometimes instead of applying the genetic algorithm a random formula
+is generated or a saved formula for the old International Genetic Art II
+site is retrieved. 
+
+<P>Scott's art exhibit used functions over the reals, this one
+uses functions over the quaternions (4 dimensional vectors) and gets color
+R/G/B values directly from three entries of the vectors.  Quaternions
+were chosen because:
+<UL>
+<LI>They form a vector space (over the reals) large enough to conveniently
+hold the three vales: R,G and B.
+<LI>They form an associative division algebra over the reals 
+(thus formulas over the
+quaternions should have some of the same properties as the formulas used
+in the first exhibit).
+<LI>Many Quaternion operations have geometric interpretation 
+(example: the functions orth1 and orth2 are 
+orthogonal maps of euclidian 3-space).
+<LI>The quaternions are somewhat unique (e.g.
+any normed associative real division algebra is isomorphic to the reals,
+complex numbers or the quaternions).
+</UL>
+
+<P> This page has been tested Netscape4.0, Netscape4.5 and IE5.0 running
+on Windows95 and WindowsNT.  This page has failed using Netscape4.5 on
+Linux and seems to work best with Microsoft IE.  By altering the control
+lines at the top of this page you can change the size and number of pictures
+rendered.
+
+<P> Source:
+<UL>
+<LI>      <a href="gpic.java">gpic.java</a>
+(class to display one picture).
+<LI>      <a href="qtree.java">qtree.java</a>
+(class to manipulate trees).
+<LI>      <a href="quaternion.java">quaternion.java</a>
+(class to implement quaternions).
+<LI>      <a href="farchive.java">farchive.java</a> 
+(class holding winning formulas from previous project- "genetic material").
+</UL>
+
+<H2>Bibliography</H2>
+<P>Ebbinghaus et al.
+<I>Numbers</I>
+Springer-Verlag, Second Edition, 1988.
+
+<P>
+Shumeet Baluja, Dean Pomerleau and Todd Jochem.  
+<I>Simulating User's Preferences: Towards Automated Artificial Evolution for Computer Generated Images.</I>
+<B>Technical Report CMU-CS-93-198.</B>
+Carnegie Mellon University.  Pittsburgh, PA.  October 1993.
+
+ <P>Karl Sims.  <I>Artificial Evolution for Computer Graphics.</I>  <B>Proceedings of SIGGRAPH 1991.</B>
+
+  </body>
+</html>
+
