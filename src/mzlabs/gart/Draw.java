@@ -176,7 +176,7 @@ public final class Draw {
 			Iterator<ImageWriter> it = ImageIO.getImageWritersBySuffix(suffix);
 			ImageWriter writer = (ImageWriter) it.next();
 			final File f = new File(fileName + "." + suffix);
-			System.out.println("writing '" + f.getAbsolutePath() + "'");
+			//System.out.println("writing '" + f.getAbsolutePath() + "'");
 			ImageOutputStream ios = ImageIO.createImageOutputStream(f);
 			writer.setOutput(ios);
 			writer.write(new IIOImage(rendImage, null, null));
