@@ -8,6 +8,8 @@ package mzlabs.gart.util;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -16,14 +18,14 @@ import java.util.TreeMap;
 public final class ClassControl {
 	private ClassLoader loader;
 
-	private Map allowed;
+	private Map<String,Class<?>> allowed;
 
 	/**
 	 * @param ldr
 	 *            optional class loader
 	 */
 	public ClassControl(ClassLoader ldr) {
-		allowed = new TreeMap();
+		allowed = new TreeMap<String, Class<?>>();
 		if (ldr != null) {
 			loader = ldr;
 		} else {
@@ -38,7 +40,7 @@ public final class ClassControl {
 	 * @param c
 	 *            class
 	 */
-	public void addClass(Class c) {
+	public void addClass(Class<?> c) {
 		if (c != null) {
 			String nm = c.getName();
 			if (!allowed.containsKey(nm)) {
@@ -55,7 +57,7 @@ public final class ClassControl {
 	 */
 	public void addClass(String s) {
 		try {
-			Class c = Class.forName(s, true, loader);
+			Class<?> c = Class.forName(s, true, loader);
 			addClass(c);
 		} catch (Exception e) {
 			System.out.println("caught: " + e);
@@ -80,8 +82,8 @@ public final class ClassControl {
 	 *            classname
 	 * @return class if in allowed set
 	 */
-	public Class getClass(String s) {
-		return (Class) allowed.get(s);
+	public Class<?> getClass(String s) {
+		return allowed.get(s);
 	}
 
 	/**
@@ -90,7 +92,7 @@ public final class ClassControl {
 	 * @param c
 	 *            class to add
 	 */
-	public void addClassDeep(Class c) {
+	public void addClassDeep(Class<?> c) {
 		if (c == null) {
 			return;
 		}
@@ -103,15 +105,15 @@ public final class ClassControl {
 			addClassDeep(c.getComponentType());
 			return;
 		}
-		Map m = XMLSerializer.getFieldMap(c);
+		SortedMap<String, Field> m = XMLSerializer.getFieldMap(c);
 		if ((m == null) || (m.isEmpty())) {
 			return;
 		}
-		Iterator it = m.entrySet().iterator();
+		Iterator<Entry<String, Field>> it = m.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry me = (Map.Entry) it.next();
-			Field fi = (Field) me.getValue();
-			Class t = fi.getType();
+			Entry<String, Field> me = it.next();
+			Field fi = me.getValue();
+			Class<?> t = fi.getType();
 			addClassDeep(t);
 		}
 	}
@@ -121,7 +123,7 @@ public final class ClassControl {
 	 *            class to start at
 	 * @return basic list of class names (plus c if not null)
 	 */
-	public static ClassControl buildClassControl(Class c) {
+	public static ClassControl buildClassControl(Class<?> c) {
 		ClassControl control = null;
 		if (c != null) {
 			control = new ClassControl(c.getClassLoader());

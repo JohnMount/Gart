@@ -115,6 +115,11 @@ public final class GartUi4 {
 	int targetFrames = Integer.MAX_VALUE;
 
 	private final Map<PFrame,PFrame> pframes = new LinkedHashMap<PFrame,PFrame>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<PFrame,PFrame> eldest) {
 			final boolean nuke = (size() > targetFrames);
@@ -303,7 +308,7 @@ public final class GartUi4 {
 	}
 
 	Rectangle[] getBoundsList() {
-		ArrayList l = new ArrayList();
+		ArrayList<Rectangle> l = new ArrayList<Rectangle>();
 		synchronized (rand) {
 			final Set<PFrame> whacks = new HashSet<PFrame>();
 			for(final PFrame ci: pframes.keySet()) {
@@ -317,7 +322,7 @@ public final class GartUi4 {
 				pframes.remove(wi);
 			}
 		}
-		return (Rectangle[]) l.toArray(new Rectangle[0]);
+		return l.toArray(new Rectangle[0]);
 	}
 
 	public Point2D getNewPlacement() {
@@ -359,7 +364,7 @@ public final class GartUi4 {
 	public GConfig getConfig() {
 		GConfig r = new GConfig();
 		synchronized (rand) {
-			LinkedList l = new LinkedList();
+			LinkedList<PConfig> l = new LinkedList<PConfig>();
 			Dimension dim = container.getSize();
 			fheight = (int) dim.getHeight();
 			fwidth = (int) dim.getWidth();
@@ -384,12 +389,17 @@ public final class GartUi4 {
 					}
 				}
 			}
-			r.frames = (PConfig[]) l.toArray(new PConfig[0]);
+			r.frames = l.toArray(new PConfig[0]);
 		}
 		return r;
 	}
 
 	class PFrame extends JInternalFrame {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public final qtree aFormula;
 
 		public final Image img;
@@ -706,7 +716,7 @@ public final class GartUi4 {
 				if (doc != null) {
 					Element re = doc.getRootElement();
 					if (re != null) {
-						Class template = Class
+						Class<?> template = Class
 								.forName("mzlabs.gart.GartUi4$GConfig");
 						ClassControl cc = ClassControl
 								.buildClassControl(template);

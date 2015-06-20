@@ -14,6 +14,11 @@ import java.awt.Image;
 // are likely to encounter.
 
 public final class gpic extends Applet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private AAElm[] scheme = AAElm.scheme(1, null);
 
 	private int pwidth = 80; // size of graphic

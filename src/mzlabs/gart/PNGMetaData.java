@@ -57,7 +57,7 @@ public class PNGMetaData {
 
 	public static void displayData(final File f) throws IOException {
 		System.out.println("reading: " + f.getAbsolutePath());
-		Iterator readers = ImageIO.getImageReadersByFormatName("png");
+		Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("png");
 		ImageReader reader = (ImageReader)readers.next();
 		ImageInputStream iis = ImageIO.createImageInputStream(f);
 		reader.setInput(iis, true);

@@ -20,6 +20,12 @@ import javax.swing.JPanel;
 
 public final class Grid extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	final static AAElm[] scheme1 = AAElm.scheme(1, null);
 
 
@@ -50,6 +56,10 @@ public final class Grid extends JPanel {
 
 
 	private final class PButton extends JButton implements ActionListener, Comparable<PButton> {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		public final int x;
 		public final int y;
 		public final int w;

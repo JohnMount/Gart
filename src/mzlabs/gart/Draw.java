@@ -173,7 +173,7 @@ public final class Draw {
 			//for(final String ni: names) {
 			//	System.out.println(ni);
 			//}
-			Iterator it = ImageIO.getImageWritersBySuffix(suffix);
+			Iterator<ImageWriter> it = ImageIO.getImageWritersBySuffix(suffix);
 			ImageWriter writer = (ImageWriter) it.next();
 			final File f = new File(fileName + "." + suffix);
 			System.out.println("writing '" + f.getAbsolutePath() + "'");

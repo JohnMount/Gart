@@ -76,6 +76,10 @@ public final class ImgNode extends qop {
 	}
 	
 	private static final class Cache extends LinkedHashMap<String,Payload> {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		public final int target;
 		
 		public Cache(final int target) {

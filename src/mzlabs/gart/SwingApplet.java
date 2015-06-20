@@ -8,6 +8,11 @@ package mzlabs.gart;
 import javax.swing.JApplet;
 
 public final class SwingApplet extends JApplet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	// This is a hack to avoid an ugly error message in 1.1.
 	public SwingApplet() {
 		getRootPane().putClientProperty("defeatSystemEventQueueCheck",

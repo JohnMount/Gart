@@ -271,8 +271,8 @@ public final class XMLSerializer {
 	public static final String collectionEltField = fieldPrefix
 			+ "collectionelt";
 
-	static SortedMap getFieldMap(Class c) {
-		SortedMap flist = new TreeMap();
+	static SortedMap<String, Field> getFieldMap(Class<?> c) {
+		SortedMap<String,Field> flist = new TreeMap<String,Field>();
 		while (c != null) {
 			Field[] flds = c.getDeclaredFields();
 			if (flds != null) {
@@ -377,7 +377,7 @@ public final class XMLSerializer {
 		Element rv = null;
 		Exception ex = null;
 		try {
-			Class c = o.getClass();
+			Class<?> c = o.getClass();
 			if (c.isArray()) {
 				rv = arrayToElement(e, nm, o, dups);
 			} else if (o instanceof Collection) {
@@ -397,7 +397,7 @@ public final class XMLSerializer {
 		return rv;
 	}
 
-	private static Class cForName(String s) {
+	private static Class<?> cForName(String s) {
 		try {
 			return Class.forName(s);
 		} catch (Exception e) {
@@ -406,31 +406,31 @@ public final class XMLSerializer {
 		return null;
 	}
 
-	private static final Class stringClass = cForName("java.lang.String");
+	private static final Class<?> stringClass = cForName("java.lang.String");
 
-	private static final Class integerClass = cForName("java.lang.Integer");
+	private static final Class<?> integerClass = cForName("java.lang.Integer");
 
-	private static final Class longClass = cForName("java.lang.Long");
+	private static final Class<?> longClass = cForName("java.lang.Long");
 
-	private static final Class floatClass = cForName("java.lang.Float");
+	private static final Class<?> floatClass = cForName("java.lang.Float");
 
-	private static final Class doubleClass = cForName("java.lang.Double");
+	private static final Class<?> doubleClass = cForName("java.lang.Double");
 
-	private static final Class byteClass = cForName("java.lang.Byte");
+	private static final Class<?> byteClass = cForName("java.lang.Byte");
 
-	private static final Class characterClass = cForName("java.lang.Character");
+	private static final Class<?> characterClass = cForName("java.lang.Character");
 
-	private static final Class booleanClass = cForName("java.lang.Boolean");
+	private static final Class<?> booleanClass = cForName("java.lang.Boolean");
 
-	static boolean equivClass(Class a, Class b) {
+	static boolean equivClass(Class<?> a, Class<?> b) {
 		return a.isAssignableFrom(b) && b.isAssignableFrom(a);
 	}
 
-	static boolean equivString(Class a) {
+	static boolean equivString(Class<?> a) {
 		return equivClass(a, stringClass);
 	}
 
-	static Object promoteString(Class c, String s) throws Exception {
+	static Object promoteString(Class<?> c, String s) throws Exception {
 		if (equivClass(c, stringClass)) {
 			return s;
 		}
@@ -461,8 +461,8 @@ public final class XMLSerializer {
 		throw new Exception("promoteString ate shit");
 	}
 
-	private Object toArray(Class c, Element m) throws Exception {
-		Class ci = c.getComponentType();
+	private Object toArray(Class<?> c, Element m) throws Exception {
+		Class<?> ci = c.getComponentType();
 		List elts = m.getChildren(arrayEltField);
 		int l = 0;
 		if ((elts != null) && (!elts.isEmpty())) {
@@ -517,7 +517,7 @@ public final class XMLSerializer {
 		return o;
 	}
 
-	private Object toObject(Class c, Object o, Element m) throws Exception {
+	private Object toObject(Class<?> c, Object o, Element m) throws Exception {
 		SortedMap fieldList = getFieldMap(o.getClass());
 		Iterator fit = fieldList.entrySet().iterator();
 		while (fit.hasNext()) {
@@ -539,7 +539,7 @@ public final class XMLSerializer {
 			return null;
 		}
 		String className = cl.getText().trim();
-		Class recordClass = null;
+		Class<?> recordClass = null;
 		if (className.charAt(0) == '[') {
 			// array, can avoid class control
 			recordClass = Class.forName(className);

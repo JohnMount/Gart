@@ -18,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public final class PStrip extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	final static AAElm[] scheme1 = AAElm.scheme(1, null);
 
 	int fheight = 900;
@@ -45,6 +50,11 @@ public final class PStrip extends JPanel {
 	}
 
 	static class CButton extends JButton implements ActionListener {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		PStrip parent;
 
 		boolean right;
@@ -81,6 +91,11 @@ public final class PStrip extends JPanel {
 	}
 
 	static class PButton extends JButton implements ActionListener {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public int w;
 
 		public int h;

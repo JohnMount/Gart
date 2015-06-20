@@ -116,9 +116,6 @@ public final class qtree {
 	// copy non- fields
 	private qtree rclone(qtree p) {
 		qtree r = null;
-		if (this == null) {
-			return null;
-		}
 		r = new qtree();
 		r._parent = p;
 		r._op = _op;
@@ -236,11 +233,7 @@ public final class qtree {
 			q = _op;
 		}
 		if (q == null) {
-			if (this == null) {
-				b.append("NULL");
-			} else {
-				b.append("null");
-			}
+			b.append("null");
 		} else {
 			if (q.degree() == 0) {
 				b.append(q.pname());
