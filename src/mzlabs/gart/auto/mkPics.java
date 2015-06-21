@@ -47,7 +47,7 @@ public class mkPics {
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Random rand = new Random(32588);
-		final int nSlots = 10;
+		final int nSlots = 100;
 		final qtree[] f = new qtree[nSlots];
 		final double[] scores = new double[nSlots];
 		for(int i=0;i<nSlots;++i) {
@@ -56,7 +56,7 @@ public class mkPics {
 		}
 		double record = 0.0;
 		int ri = 0;
-		for(int j=0;j<100;++j) {
+		for(int j=0;j<1000;++j) {
 			final int p1 = rand.nextInt(nSlots);
 			final int p2 = rand.nextInt(nSlots);
 			final qtree newf = f[p1].breed(f[p2]);
@@ -75,6 +75,7 @@ public class mkPics {
 				final File fi = renderNice(ri,newf);
 				System.out.println("" + ri + 
 						"\t" + newf.toString() + 
+						"\t" + news +
 						"\t" + fi.getAbsolutePath() + 
 						"\t" + new Date());
 			}
