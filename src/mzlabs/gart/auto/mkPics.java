@@ -69,6 +69,12 @@ public class mkPics {
 		final qtree[] f = new qtree[nSlots];
 		final double[] scores = new double[nSlots];
 		
+		System.out.println("" + "recordNumber" + 
+				"\t" + "formula" + 
+				"\t" + "score" +
+				"\t" + "imagePath" + 
+				"\t" + "when");
+		
 		for(int i=0;i<nSlots;++i) {
 			f[i] = qtree.rantree(7);
 			final double news = scoreIt(f[i]);
