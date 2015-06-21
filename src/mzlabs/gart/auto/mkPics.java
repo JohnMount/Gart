@@ -111,18 +111,21 @@ public class mkPics {
 		for(int i=0;i<nSlots;++i) {
 			f[i] = qtree.rantree(7);
 		}
-		{
+		{ // get initial concepts
 			int i = 0;
-			for(int j=0;j<workN;++j) {
-				workSet[j] = qtree.rantree(7);
-				f[i+j] = workSet[j];
+			while(i<nSlots) {
+				for(int j=0;j<workN;++j) {
+					workSet[j] = qtree.rantree(7);
+					f[i+j] = workSet[j];
+				}
+				final double[] news = score(workSet);
+				for(int j=0;j<workN;++j) {
+					scores[i+j] = news[j];
+				}
+				i += workN;
 			}
-			final double[] news = score(workSet);
-			for(int j=0;j<workN;++j) {
-				scores[i+j] = news[j];
-			}
-			i += workN;
 		}
+		// breed
 		for(int step=0;step<runPhases;++step) {
 			for(int j=0;j<workN;++j) {
 				final int p1 = rand.nextInt(nSlots);
