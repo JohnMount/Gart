@@ -121,6 +121,7 @@ public class mkPics {
 			for(int j=0;j<workN;++j) {
 				scores[i+j] = news[j];
 			}
+			i += workN;
 		}
 		for(int step=0;step<runPhases;++step) {
 			for(int j=0;j<workN;++j) {
