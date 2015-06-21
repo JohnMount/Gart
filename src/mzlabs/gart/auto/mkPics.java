@@ -58,7 +58,7 @@ public class mkPics {
 		final String resName = "picS.txt";
 		command.add("./" + resName);
 		final Runtime r = Runtime.getRuntime();
-		final Process proc = r.exec((String[])command.toArray(),new String[] {});
+		final Process proc = r.exec((String[])command.toArray(new String[] {}));
 		proc.waitFor();
 		final File scoreF = new File(resName);
 		final BufferedReader rdr = new BufferedReader(new FileReader(scoreF));
