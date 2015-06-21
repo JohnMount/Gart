@@ -143,7 +143,6 @@ public class mkPics {
 					final int p1 = rand.nextInt(f.length);
 					final int p2 = rand.nextInt(f.length);
 					workSet[j] = f[p1].breed(f[p2]);
-					workSet[j] = qtree.rantree(7);
 				}
 			}
 		}
