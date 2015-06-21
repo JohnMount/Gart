@@ -35,8 +35,8 @@ net = caffe.Classifier(MODEL_FILE, PRETRAINED,
 
 input_image = caffe.io.load_image(IMAGE_FILE)
 
-prediction = net.predict([input_image])  # predict takes any number of images, and formats them for the Caffe net automatically
-pclass = prediction[0].argmax()
+prediction = net.predict([input_image])[0]  # predict takes any number of images, and formats them for the Caffe net automatically
+pclass = prediction.argmax()
 print 'predicted class:', pclass
 print 'predicted class name:', content[pclass]
 
