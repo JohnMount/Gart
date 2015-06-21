@@ -198,11 +198,13 @@ public class mkPics {
 			while(!exec.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
 			}
 			int i = 0;
-			for(final RRun task: initialTasks) {
-				for(int j=0;j<task.workN;++j) {
-					f[i] = task.workSet[j];
-					scores[i] = task.scores[j];
-					++i;
+			synchronized (lock) {
+				for(final RRun task: initialTasks) {
+					for(int j=0;j<task.workN;++j) {
+						f[i] = task.workSet[j];
+						scores[i] = task.scores[j];
+						++i;
+					}
 				}
 			}
 		}
