@@ -2,6 +2,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from skimage.restoration import denoise_tv_chambolle
 
 
 #print str(sys.argv)
@@ -28,6 +29,8 @@ net = caffe.Classifier(MODEL_FILE, PRETRAINED,
                        image_dims=(256, 256))
 
 input_images = [ caffe.io.load_image(IF) for IF in IMAGE_FILES ]
+# try to not let local dots control score- so denoise them out a bit before scoring
+input_images = [ denoise_tv_chambolle(img, weight=0.2, multichannel=True) for img in input_images ]
 
 prediction = net.predict(input_images)  # predict takes any number of images, and formats them for the Caffe net automatically
 
