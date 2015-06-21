@@ -38,7 +38,7 @@ f1 = open(outF, 'w')
 
 for i in range(0,NINPUTS):
     # crabs
-    score = prediction[i][120] + prediction[i][121] + prediction[i][122] + prediction[i][123] + prediction[i][126]
+    score = prediction[i][118] + prediction[i][119] + prediction[i][120] + prediction[i][121] + prediction[i][125]
     f1.write(str(score))
     f1.write('\n')
     
