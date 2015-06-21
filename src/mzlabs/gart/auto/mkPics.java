@@ -51,18 +51,18 @@ public class mkPics {
 		for(int i=0;i<f.length;++i) {
 			final Image img = Draw.draw(f[i], w, h, 0.0, aaScheme);
 			final String nmI = "picS"+decimalFormat.format(i);
-			command.add("./"+nmI);
+			command.add("./"+nmI+".png");
 			final File file = Draw.writePNG(img,nmI);
 			files[i] = file;
 		}
 		final String resName = "picS.txt";
 		command.add("./" + resName);
 		final Runtime r = Runtime.getRuntime();
-		final String[] commandA = (String[])command.toArray(new String[] {});
-		for(final String ci: commandA) {
-		  System.out.print(commandA + " ");
-		}
-		System.out.println();
+		final String[] commandA = (String[])command.toArray(new String[0]);
+//		for(final String ci: commandA) {
+//		  System.out.print(ci + " ");
+//		}
+//		System.out.println();
 		final Process proc = r.exec(commandA);
 		proc.waitFor();
 		final File scoreF = new File(resName);
