@@ -45,22 +45,40 @@ public class mkPics {
 		return scoreV;
 	}
 	
-	public static void main(String[] args) throws IOException, InterruptedException {
-		Random rand = new Random(32588);
+	double record = 0.0;
+	int ri = 0;
+	
+	private double scoreIt(final qtree f) throws IOException, InterruptedException {
+		final double news = score(f);
+		if(news>record) {
+			record = news;
+			++ri;
+			final File fi = renderNice(ri,f);
+			System.out.println("" + ri + 
+					"\t" + f.toString() + 
+					"\t" + news +
+					"\t" + fi.getAbsolutePath() + 
+					"\t" + new Date());
+		}
+		return news;
+	}
+	
+	public void doit() throws IOException, InterruptedException {
+		final Random rand = new Random(32588);
 		final int nSlots = 100;
 		final qtree[] f = new qtree[nSlots];
 		final double[] scores = new double[nSlots];
+		
 		for(int i=0;i<nSlots;++i) {
 			f[i] = qtree.rantree(7);
-			scores[i] = score(f[i]);
+			final double news = scoreIt(f[i]);
+			scores[i] = news;
 		}
-		double record = 0.0;
-		int ri = 0;
 		for(int j=0;j<1000;++j) {
 			final int p1 = rand.nextInt(nSlots);
 			final int p2 = rand.nextInt(nSlots);
 			final qtree newf = f[p1].breed(f[p2]);
-			final double news = score(newf);
+			final double news = scoreIt(newf);
 			for(int t=0;t<5;++t) {
 				final int v = rand.nextInt(nSlots);
 				if(scores[v]<news) {
@@ -69,17 +87,11 @@ public class mkPics {
 					break;
 				}
 			}
-			if(news>record) {
-				record = news;
-				++ri;
-				final File fi = renderNice(ri,newf);
-				System.out.println("" + ri + 
-						"\t" + newf.toString() + 
-						"\t" + news +
-						"\t" + fi.getAbsolutePath() + 
-						"\t" + new Date());
-			}
 		}
+	}
+	
+	public static void main(String[] args) throws IOException, InterruptedException {
+		(new mkPics()).doit();
 	}
 
 }
