@@ -54,8 +54,10 @@ import mzlabs.gart.ops.BasicOps.qop_qsub;
 import mzlabs.gart.util.DStat;
 
 public final class qtree {
-	public static final Random rand = new Random();
-
+	// Now thread safe see:
+	//  http://stackoverflow.com/questions/5819638/is-random-class-thread-safe
+	//  http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6362070
+	public static final Random rand = new Random(); 
 	private final static Map<String,qop> symbolTable = new HashMap<String,qop>();
 	private final static Map<Integer,ArrayList<qop>> degMap = new HashMap<Integer,ArrayList<qop>>();
 	
@@ -475,14 +477,19 @@ public final class qtree {
 	 * @param scheme
 	 * @param img
 	 */
-	public static void picfromform(final qtree[] formula, final double[] wt, 
+	public static void picfromform(final qtree[] fin, final double[] wt, 
 			final int pwidth, final int pheight, final double[] z, final AAElm[] scheme, final Image img) {
 		final Graphics g = img.getGraphics();
-		if ((formula == null)||(formula.length<=0)) {
+		if ((fin == null)||(fin.length<=0)) {
 			Color c2 = new Color(127, 0, 0);
 			g.setColor(c2);
 			g.fillRect(0, 0, pwidth, pheight);
 		} else {
+			// isolate formulas for thread safety (code was originally C code with in-struct side effects)
+			final qtree[] formula = new qtree[fin.length];
+			for(int i=0;i<fin.length;++i) {
+				formula[i] = fin[i].rclone(null);
+			}
 			final int span;
 			if (pwidth >= pheight) {
 				span = pheight;
