@@ -30,7 +30,7 @@ net = caffe.Classifier(MODEL_FILE, PRETRAINED,
 
 input_images = [ caffe.io.load_image(IF) for IF in IMAGE_FILES ]
 # try to not let local dots control score- so denoise them out a bit before scoring
-input_images = [ denoise_tv_chambolle(img, weight=0.2, multichannel=True) for img in input_images ]
+image_noise = [ sum(sum(sum(abs(img-denoise_tv_chambolle(img, weight=0.2, multichannel=True)))))/(img.shape[0]*img.shape[1]*img.shape[2]) for img in input_images ]
 
 prediction = net.predict(input_images)  # predict takes any number of images, and formats them for the Caffe net automatically
 
@@ -38,7 +38,9 @@ f1 = open(outF, 'w')
 
 for i in range(0,NINPUTS):
     # crabs
-    score = prediction[i][118] + prediction[i][119] + prediction[i][120] + prediction[i][121] + prediction[i][125]
+    score = (prediction[i][118] + prediction[i][119] + prediction[i][120] + prediction[i][121] + prediction[i][125])/max(1,sum(prediction[i]))
+    if(image_noise[i]>=0.05):
+        score = 0.0
     f1.write(str(score))
     f1.write('\n')
     

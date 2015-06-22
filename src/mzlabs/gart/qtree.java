@@ -460,12 +460,23 @@ public final class qtree {
 		}
 	}
 
-	public void picfromform(final int pwidth, final int pheight, final double z, AAElm[] scheme, Image img) {
+	public void picfromform(final int pwidth, final int pheight, final double z, final AAElm[] scheme, final Image img) {
 		picfromform(new qtree[] { this }, new double[] { 1.0 }, pwidth, pheight, new double[] {z}, scheme, img);
 	}
 	
-	public static void picfromform(qtree[] formula, double[] wt, 
-			final int pwidth, final int pheight, final double[] z, AAElm[] scheme, Image img) {
+	
+	/**
+	 * Multiple formulas is to support transitions and fades
+	 * @param formula
+	 * @param wt
+	 * @param pwidth
+	 * @param pheight
+	 * @param z
+	 * @param scheme
+	 * @param img
+	 */
+	public static void picfromform(final qtree[] formula, final double[] wt, 
+			final int pwidth, final int pheight, final double[] z, final AAElm[] scheme, final Image img) {
 		final Graphics g = img.getGraphics();
 		if ((formula == null)||(formula.length<=0)) {
 			Color c2 = new Color(127, 0, 0);
@@ -529,10 +540,12 @@ public final class qtree {
 					}
 				}
 			}
+			// here we have the image in r, so we can compute stats here if we want
+			// Apparently: apply some sort of adaptive blurring scheme (it has been a while)
 			final int processingRadius = 5;
 			final double epsilon = 1.0e-3;
-			double[] smoothed = new double[3];
-			DStat varEst = new DStat();
+			final double[] smoothed = new double[3];
+			final DStat varEst = new DStat();
 			for (int i = 0; i < pwidth; ++i) {
 				for (int j = 0; j < pheight; ++j) {
 					final int radiussq;

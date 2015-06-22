@@ -146,7 +146,7 @@ public final class Draw {
 		}
 	}
 	
-	public static Image draw(qtree[] formula, double[] wt, 
+	private static Image draw(qtree[] formula, double[] wt, 
 			final int width, final int height, final double[] z,
 			AAElm[] scheme) {
 		Image image = new BufferedImage(width, height,
