@@ -121,9 +121,6 @@ public class mkPics {
 		public void run() {
 			try {
 				scores = score(0,workSet);
-				for(int i=0;i<workN;++i) {
-					System.out.println("start: " + i + " scores: " + scores[i]);
-				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -228,7 +225,7 @@ public class mkPics {
 		exec.shutdown();
 		while(!exec.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
 		}
-		System.err.println("all done\t" + new Date());
+		//System.err.println("all done\t" + new Date());
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
