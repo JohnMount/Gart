@@ -104,12 +104,12 @@ public class mkPics {
 	}
 	
 	public final class RRun implements Runnable {
+		private final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
 		public final int workN;
 		public final qtree[] workSet;
 		public double[] scores = null;
 		
 		public RRun() {
-			final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
 			this.workN = indices.length;
 			workSet = new qtree[workN];
 			for(int j=0;j<workN;++j) {
@@ -121,6 +121,9 @@ public class mkPics {
 		public void run() {
 			try {
 				scores = score(0,workSet);
+				for(int i=0;i<workN;++i) {
+					System.out.println("start: " + i + " scores: " + scores[i]);
+				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
