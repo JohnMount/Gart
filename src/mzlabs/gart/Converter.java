@@ -2,18 +2,45 @@ package mzlabs.gart;
 
 import java.awt.Color;
 
-public class Converter {
+public final class Converter {
 	public static Converter colorConverter = new Converter();
-
 	private final double crunchBound = 30.0;
+	public boolean useCorrectCrunch = false;
 	
-	public double crunch(final double x) {
+	/**
+	 * Newer continuous crunch, works with uncrunch
+	 * @param x
+	 * @return
+	 */
+	private double correctCrunch(final double x) {
 		if(x >= crunchBound) {
 			return 1.0;
 		} else  if(x <= -crunchBound) {
 			return 0.0;
 		} else {
 			return 1.0 / (1.0 + Math.exp(-x));
+		}
+	}
+	
+	/** 
+	 * Older buggy crunch, nice effect on farchive.flist[45] 
+	 * ( iexp ( exp( iexp( isin( exp( iexp( isin( / j( / x+iy+jx+ky k ) ) ) ) ) ) ) ) )
+	 * the so-called crab
+	 * @param x
+	 * @return
+	 */
+	private static double buggyCrunch(final double x) {
+		if((x>30.0)||(x<-30.0)) {
+			return 0.0;
+		}
+		return 1.0/(1.0+Math.exp(-x));
+	}
+
+	public double crunch(final double x) {
+		if(useCorrectCrunch) {
+			return correctCrunch(x);
+		} else {
+			return buggyCrunch(x);
 		}
 	}
 

@@ -53,7 +53,7 @@ public final class Draw {
 	}
 	
 	public static class QRunnable implements Runnable {
-		public static final int POOLSIZE = 2;
+		public static final int POOLSIZE = 4;
 		private static final Object sync = new Object();
 		private static int nextId = 0;
 		private final int id;
@@ -214,16 +214,16 @@ public final class Draw {
 	
 	public static void main(final String[] args) throws Exception  {
 		System.out.println("start\t" + new Date());
-		CommandLineHandler clh = new CommandLineHandler("Draw");
-		Option formDirArg = clh.addRArg("formDir","where to read input formulas");
-		Option destDirArg = clh.addRArg("destDir","where to write result images");
-		Option sourceImgDirArg = clh.addOArg("srcImgs","directory of source images");
-		Option wArg = clh.addOArg("width","result image width in pixels");
-		Option hArg = clh.addOArg("height","result image height in pixels");
-		Option aaArg = clh.addOArg("aaLevel","level of anti aliasing");
-		CommandLine cmd = clh.parse(System.out, args);
+		final CommandLineHandler clh = new CommandLineHandler("Draw");
+		final Option formDirArg = clh.addOArg("formDir","where to read input formulas");
+		final Option formFileArg = clh.addOArg("formFile","where to read input formulas");
+		final Option destDirArg = clh.addRArg("destDir","where to write result images");
+		final Option sourceImgDirArg = clh.addOArg("srcImgs","directory of source images");
+		final Option wArg = clh.addOArg("width","result image width in pixels");
+		final Option hArg = clh.addOArg("height","result image height in pixels");
+		final Option aaArg = clh.addOArg("aaLevel","level of anti aliasing");
+		final CommandLine cmd = clh.parse(System.out, args);
 		
-		final File formDir = new File(cmd.getOptionValue(formDirArg.getOpt()));
 		final File destDir = new File(cmd.getOptionValue(destDirArg.getOpt()));
 
 		int w = 1280; //2560;
@@ -254,19 +254,39 @@ public final class Draw {
 		destDir.mkdirs();
 		System.out.println("writing to '" + destDir.getAbsolutePath() + "'");
 		final ScheduledThreadPoolExecutor executer = new ScheduledThreadPoolExecutor(QRunnable.POOLSIZE);
-		final File[] list = formDir.listFiles();
-		for(final File fi: list) {
-			final String nm = fi.getName();
-			final String txtSuffix = ".txt";
-			if(nm.endsWith(txtSuffix)) {
-				LineNumberReader rdr = new LineNumberReader(new FileReader(fi));
-				String f = rdr.readLine();
-				rdr.close();
-				final File dest = new File(destDir,nm.substring(0,nm.length() - txtSuffix.length()));
-				QRunnable r = new QRunnable(f,w,h,0.0,aaScheme,dest.getAbsolutePath());
-				QRunnable.addAndMaybeWait(executer,r);
+		if(cmd.getOptionValue(formDirArg.getOpt())!=null) {
+			final File formDir = new File(cmd.getOptionValue(formDirArg.getOpt()));
+			final File[] list = formDir.listFiles();
+			for(final File fi: list) {
+				final String nm = fi.getName();
+				final String txtSuffix = ".txt";
+				if(nm.endsWith(txtSuffix)) {
+					LineNumberReader rdr = new LineNumberReader(new FileReader(fi));
+					String f = rdr.readLine();
+					rdr.close();
+					final File dest = new File(destDir,nm.substring(0,nm.length() - txtSuffix.length()));
+					QRunnable r = new QRunnable(f,w,h,0.0,aaScheme,dest.getAbsolutePath());
+					QRunnable.addAndMaybeWait(executer,r);
+				}
 			}
 		}
+		if(cmd.getOptionValue(formFileArg.getOpt())!=null) {
+			final File formFile = new File(cmd.getOptionValue(formFileArg.getOpt()));
+			final LineNumberReader rdr = new LineNumberReader(new FileReader(formFile));
+			String line = null;
+			while((line = rdr.readLine())!=null) {
+				line = line.trim();
+				if((line.length()>0)&&(line.charAt(0)!='#')) {
+					final int intVal = Integer.parseInt(line);
+					final String f = farchive.flist[intVal];
+					final File dest = new File(destDir,line);
+					QRunnable r = new QRunnable(f,w,h,0.0,aaScheme,dest.getAbsolutePath());
+					QRunnable.addAndMaybeWait(executer,r);
+				}
+			}
+			rdr.close();
+		}
+
 		QRunnable.shutdownAndAwaitFinish(executer);
 		System.out.println("all done\t" + new Date());
 	}
