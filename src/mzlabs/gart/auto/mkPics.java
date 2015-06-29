@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import mzlabs.gart.AAElm;
 import mzlabs.gart.Draw;
+import mzlabs.gart.farchive;
 import mzlabs.gart.qtree;
 
 public class mkPics {
@@ -103,24 +104,23 @@ public class mkPics {
 	}
 	
 	public final class RRun implements Runnable {
-		public final int g;
 		public final int workN;
 		public final qtree[] workSet;
 		public double[] scores = null;
 		
-		public RRun(final int g, final int workN) {
-			this.g = g;
-			this.workN = workN;
+		public RRun() {
+			final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
+			this.workN = indices.length;
 			workSet = new qtree[workN];
 			for(int j=0;j<workN;++j) {
-				workSet[j] = qtree.rantree(7);
+				workSet[j] = qtree.newTree(farchive.flist[indices[j]]);
 			}
 		}
 
 		@Override
 		public void run() {
 			try {
-				scores = score(g,workSet);
+				scores = score(0,workSet);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -189,20 +189,17 @@ public class mkPics {
 							TimeUnit.MILLISECONDS,
 							new LinkedBlockingQueue<Runnable>()
 							);
-			final RRun[] initialTasks = new RRun[nGroups];
-			for(int g=0;g<nGroups;++g) {
-				initialTasks[g] = new RRun(g,workN);
-				exec.execute(initialTasks[g]);
-			}
+			final RRun initialTasks = new RRun();
+			exec.execute(initialTasks);
 			exec.shutdown();
 			while(!exec.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
 			}
-			int i = 0;
 			synchronized (lock) {
-				for(final RRun task: initialTasks) {
-					for(int j=0;j<task.workN;++j) {
-						f[i] = task.workSet[j];
-						scores[i] = task.scores[j];
+				int i = 0;
+				while(i<scores.length) {
+					for(int j=0;(i<scores.length)&&(j<initialTasks.workN);++j) {
+						f[i] = initialTasks.workSet[j];
+						scores[i] = initialTasks.scores[j];
 						++i;
 					}
 				}
@@ -217,7 +214,7 @@ public class mkPics {
 						new LinkedBlockingQueue<Runnable>()
 						);
 		// breed
-		for(int step=0;step<runPhases;++step) {
+		for(int step=1;step<=runPhases;++step) {
 			final BRun task = new BRun(step,workN,rand);
 			if(exec.getActiveCount()>5) {
 				task.run();
@@ -228,6 +225,7 @@ public class mkPics {
 		exec.shutdown();
 		while(!exec.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
 		}
+		System.err.println("all done\t" + new Date());
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
