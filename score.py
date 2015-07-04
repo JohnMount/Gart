@@ -37,8 +37,8 @@ prediction = net.predict(input_images)  # predict takes any number of images, an
 f1 = open(outF, 'w')
 
 for i in range(0,NINPUTS):
-    # crabs
-    score = (prediction[i][118] + prediction[i][119] + prediction[i][120] + prediction[i][121] + prediction[i][125])/max(1,sum(prediction[i]))
+    # crabs (files are numbered from 1 by grep and 0 in arrays using  119:n01978287 Dungeness crab, Cancer magister
+    score = prediction[i][118]/max(1,sum(prediction[i]))
     if(image_noise[i]>=0.05):
         score = 0.0
     f1.write(str(score))
