@@ -193,13 +193,19 @@ public class mkPics {
 			final double[] news = score(g,workSet);
 			checkRecords(workSet,news);
 			// get into population
+			final int ntry = 7;
+			final int nmax = 3;
 			for(int j=0;j<workN;++j) {
-				for(int t=0;t<5;++t) {
+				int ins = 0;
+				for(int t=0;t<ntry;++t) {
 					final int v = rand.nextInt(nSlots);
 					if(scores[v]<news[j]) {
 						f[v] = workSet[j];
 						scores[v] = news[j];
-						break;
+						++ins;
+						if(ins>=nmax) {
+							break;
+						}
 					}
 				}
 			}
