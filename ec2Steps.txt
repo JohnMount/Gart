@@ -6,6 +6,6 @@
 3) cd caffe/examples
 4) git clone https://github.com/JohnMount/Gart.git
 5) cp Gart/score.py .
-6) nohup java -cp Gart/Gart.jar:Gart/lib/ApacheCSV.jar:Gart/lib/commons-cli-1.2.jar:Gart/lib/jdom.jar:Gart/lib/junit-4.6.jar mzlabs.gart.auto.mkPics > runLog.txt 2>&1 &
+6) nohup java -Xmx8G -cp Gart/Gart.jar:Gart/lib/ApacheCSV.jar:Gart/lib/commons-cli-1.2.jar:Gart/lib/jdom.jar:Gart/lib/junit-4.6.jar mzlabs.gart.auto.mkPics > runLog.txt 2>&1 &
 
 

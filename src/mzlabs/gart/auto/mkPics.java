@@ -143,67 +143,7 @@ public class mkPics {
 		return scores;
 	}
 
-	public final class RRun implements Runnable {
-		private final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
-		public final int workN;
-		public final qtree[] workSet;
-		public double[] scores = null;
 
-		public RRun() {
-			this.workN = indices.length;
-			workSet = new qtree[workN];
-			for(int j=0;j<workN;++j) {
-				workSet[j] = qtree.newTree(farchive.flist[indices[j]]);
-			}
-		}
-
-		@Override
-		public void run() {
-			try {
-				scores = score(0,workSet);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	public final class BRun implements Runnable {
-		public final int g;
-		public final int workN;
-		public final qtree[] workSet;
-		private final Random rand;
-
-		public BRun(final int g, final int workN, final Random rand) {
-			this.g = g;
-			this.workN = workN;
-			workSet = new qtree[workN];
-			this.rand = new Random(rand.nextLong());
-			for(int j=0;j<workN;++j) {
-				final int p1 = rand.nextInt(f.length);
-				final int p2 = rand.nextInt(f.length);
-				workSet[j] = f[p1].breed(f[p2]);
-			}
-		}
-
-		@Override
-		public void run() {
-			try {
-				final double[] news = score(g,workSet);
-				for(int j=0;j<workN;++j) {
-					for(int t=0;t<5;++t) {
-						final int v = rand.nextInt(nSlots);
-						if(scores[v]<news[j]) {
-							f[v] = workSet[j];
-							scores[v] = news[j];
-							break;
-						}
-					}
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
 
 	public void doit() throws IOException, InterruptedException {
 		final Random rand = new Random(32588);
@@ -216,21 +156,43 @@ public class mkPics {
 				"\t" + "when");
 
 		{ // get initial concepts
-			final RRun initialTasks = new RRun();
-			initialTasks.run();
+			final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
+			final qtree[] workSet = new qtree[indices.length];
+			for(int j=0;j<workN;++j) {
+				workSet[j] = qtree.newTree(farchive.flist[indices[j]]);
+			}
+			final double[] scoresW = score(0,workSet);
 			int i = 0;
 			while(i<scores.length) {
-				for(int j=0;(i<scores.length)&&(j<initialTasks.workN);++j) {
-					f[i] = initialTasks.workSet[j];
-					scores[i] = initialTasks.scores[j];
+				for(int j=0;j<workSet.length;++j) {
+					f[i] = workSet[j];
+					scores[i] = scoresW[j];
 					++i;
+					if(i>scores.length) {
+						break;
+					}
 				}
 			}
 		}
-		// breed
-		for(int step=1;step<=runPhases;++step) {
-			final BRun task = new BRun(step,workN,rand);
-			task.run();
+		// breed and score
+		for(int g=1;g<=runPhases;++g) {
+			final qtree[] workSet = new qtree[workN];
+			for(int j=0;j<workN;++j) {
+				final int p1 = rand.nextInt(f.length);
+				final int p2 = rand.nextInt(f.length);
+				workSet[j] = f[p1].breed(f[p2]);
+			}
+			final double[] news = score(g,workSet);
+			for(int j=0;j<workN;++j) {
+				for(int t=0;t<5;++t) {
+					final int v = rand.nextInt(nSlots);
+					if(scores[v]<news[j]) {
+						f[v] = workSet[j];
+						scores[v] = news[j];
+						break;
+					}
+				}
+			}
 		}
 		//System.err.println("all done\t" + new Date());
 	}
