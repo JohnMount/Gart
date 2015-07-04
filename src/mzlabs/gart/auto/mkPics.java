@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,12 +31,8 @@ public class mkPics {
 		return Draw.writePNG(img,"picR"+decimalFormat.format(idx));
 	}
 
-	double record = 0.0;
-	int ri = 0;
-	final int workN = 20;
-	final int nSlots = 1000;
-	final qtree[] f = new qtree[nSlots];
-	final double[] scores = new double[nSlots];
+	double recordScore = 0.0;
+	int recordNumber = 0;
 
 
 	public static final class DrawI implements Runnable {
@@ -134,18 +131,20 @@ public class mkPics {
 		return scores;
 	}
 
-	public void checkRecords(final qtree[] formulas, final double[] fscores) {
+	public void checkRecords(final qtree[] formulas, final double[] fscores, final int phase, final int[] ages) {
 		for(int i=0;i<formulas.length;++i) {
 			final qtree formi = formulas[i];
 			final double scoreV = fscores[i];
-			if(scoreV>record) {
-				record = scoreV;
-				++ri;
-				final File fi = renderNice(ri,formi);
-				System.out.println("" + ri + 
+			if(scoreV>recordScore) {
+				recordScore = scoreV;
+				++recordNumber;
+				final File fi = renderNice(recordNumber,formi);
+				System.out.println("" + recordNumber + 
 						"\t" + formi.toString() + 
 						"\t" + scoreV +
 						"\t" + fi.getAbsolutePath() + 
+						"\t" + phase +
+						"\t" + ages[i] + 
 						"\t" + new Date());
 			}
 		}
@@ -153,12 +152,20 @@ public class mkPics {
 
 	public void doit() throws IOException, InterruptedException {
 		final Random rand = new Random(32588);
-		final int runPhases = 10000;		
+		final int runPhases = 10000;
+		final int workN = 100;
+		final int nSlots = 5000;
+		final qtree[] f = new qtree[nSlots];
+		final int[] ages = new int[nSlots];
+		final double[] scores = new double[nSlots];
+
 
 		System.out.println("" + "recordNumber" + 
 				"\t" + "formula" + 
 				"\t" + "score" +
 				"\t" + "imagePath" + 
+				"\t" + "phase" +
+				"\t" + "generation" +
 				"\t" + "when");
 
 		{ // get initial concepts
@@ -168,7 +175,8 @@ public class mkPics {
 				workSet[j] = qtree.newTree(farchive.flist[indices[j]]);
 			}
 			final double[] scoresW = score(0,workSet);
-			checkRecords(workSet,scoresW);
+			checkRecords(workSet,scoresW,0,new int[indices.length]);
+			Arrays.fill(ages,0);
 			int i = 0;
 			while(i<scores.length) {
 				for(int j=0;j<workSet.length;++j) {
@@ -184,27 +192,27 @@ public class mkPics {
 		// breed and score
 		for(int g=1;g<=runPhases;++g) {
 			final qtree[] workSet = new qtree[workN];
+			final int[] wAges = new int[workN];
 			for(int j=0;j<workN;++j) {
 				final int p1 = rand.nextInt(f.length);
 				final int p2 = rand.nextInt(f.length);
 				workSet[j] = f[p1].breed(f[p2]);
+				wAges[j] = 1 + Math.max(ages[p1],ages[p2]);
 			}
 			final double[] news = score(g,workSet);
-			checkRecords(workSet,news);
-			// get into population
-			final int ntry = 7;
-			final int nmax = 3;
+			checkRecords(workSet,news,g,wAges);
+			// place into population
+			final int ntry = 5;
 			for(int j=0;j<workN;++j) {
-				int ins = 0;
+				final double scoreJ = news[j];
 				for(int t=0;t<ntry;++t) {
 					final int v = rand.nextInt(nSlots);
-					if(scores[v]<news[j]) {
+					final double total = scores[v]+scoreJ;
+					// place in with odds proportional to how much of sum of score we are
+					if(rand.nextDouble()*total<=scoreJ) {
 						f[v] = workSet[j];
-						scores[v] = news[j];
-						++ins;
-						if(ins>=nmax) {
-							break;
-						}
+						ages[v] = wAges[j];
+						scores[v] = scoreJ;
 					}
 				}
 			}
