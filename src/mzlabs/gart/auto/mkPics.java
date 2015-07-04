@@ -154,7 +154,7 @@ public class mkPics {
 		final Random rand = new Random(32588);
 		final int runPhases = 10000;
 		final int workN = 100;
-		final int nSlots = 5000;
+		final int nSlots = 200;
 		final qtree[] f = new qtree[nSlots];
 		final int[] ages = new int[nSlots];
 		final double[] scores = new double[nSlots];
@@ -190,6 +190,8 @@ public class mkPics {
 			}
 		}
 		// breed and score
+		// need to balance how often an item is eligible to breed versus how 
+		// often it is replaced
 		for(int g=1;g<=runPhases;++g) {
 			final qtree[] workSet = new qtree[workN];
 			final int[] wAges = new int[workN];
@@ -201,18 +203,24 @@ public class mkPics {
 			}
 			final double[] news = score(g,workSet);
 			checkRecords(workSet,news,g,wAges);
+			// get a quantile on scores
+			final double[] q = Arrays.copyOf(news,news.length);
+			Arrays.sort(q); // sort ascending
+			final double threshold = q[q.length-2-(int)Math.floor(0.1*q.length)]; // assuming not all score well
 			// place into population
 			final int ntry = 5;
 			for(int j=0;j<workN;++j) {
 				final double scoreJ = news[j];
-				for(int t=0;t<ntry;++t) {
-					final int v = rand.nextInt(nSlots);
-					final double total = scores[v]+scoreJ;
-					// place in with odds proportional to how much of sum of score we are
-					if(rand.nextDouble()*total<=scoreJ) {
-						f[v] = workSet[j];
-						ages[v] = wAges[j];
-						scores[v] = scoreJ;
+				if(scoreJ>threshold) {
+					for(int t=0;t<ntry;++t) {
+						final int v = rand.nextInt(nSlots);
+						final double total = scores[v]+scoreJ;
+						// place in with odds proportional to how much of sum of score we are
+						if(rand.nextDouble()*total<=scoreJ) {
+							f[v] = workSet[j];
+							ages[v] = wAges[j];
+							scores[v] = scoreJ;
+						}
 					}
 				}
 			}
