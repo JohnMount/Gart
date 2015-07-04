@@ -39,15 +39,17 @@ public class mkPics {
 	final double[] scores = new double[nSlots];
 
 
-	public final class DrawI implements Runnable {
+	public static final class DrawI implements Runnable {
 		public final int group;
 		public final int i;
+		public final qtree fi;
 		public final String nmI;
 		public File resFile = null;
 
-		public DrawI(final int group, final int i) {
+		public DrawI(final int group, final int i, final qtree fi) {
 			this.group = group;
 			this.i = i;
+			this.fi = fi;
 			final DecimalFormat decimalFormat = new DecimalFormat("000000");
 			nmI = "picS"+ group + "_" + decimalFormat.format(i);
 		}
@@ -59,7 +61,7 @@ public class mkPics {
 				final int h = 256;
 				final int aa = 1;
 				final AAElm[] aaScheme = AAElm.scheme(aa, new Random(66262));
-				final Image img = Draw.draw(f[i], w, h, 0.0, aaScheme);
+				final Image img = Draw.draw(fi, w, h, 0.0, aaScheme);
 				final File file = Draw.writePNG(img,nmI);
 				resFile = file;
 			}
@@ -75,7 +77,7 @@ public class mkPics {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public final double[] score(final int group, final qtree[] f) throws IOException, InterruptedException {
+	public static final double[] score(final int group, final qtree[] f) throws IOException, InterruptedException {
 		final int threads = 10;
 		final ThreadPoolExecutor exec =
 				new ThreadPoolExecutor(
@@ -86,8 +88,8 @@ public class mkPics {
 						new LinkedBlockingQueue<Runnable>()
 						);
 		final DrawI[] tasks = new DrawI[f.length];
-		for(int i=0;i<=f.length;++i) {
-			tasks[i] = new DrawI(group,i);
+		for(int i=0;i<f.length;++i) {
+			tasks[i] = new DrawI(group,i,f[i]);
 			if(exec.getActiveCount()>5) {
 				tasks[i].run();
 			} else {
@@ -124,16 +126,6 @@ public class mkPics {
 			final String scoreS = rdr.readLine();
 			final double scoreV = Double.parseDouble(scoreS.trim());
 			scores[i] = scoreV;
-			if(scoreV>record) {
-				record = scoreV;
-				++ri;
-				final File fi = renderNice(ri,f[i]);
-				System.out.println("" + ri + 
-						"\t" + f[i].toString() + 
-						"\t" + scoreS +
-						"\t" + fi.getAbsolutePath() + 
-						"\t" + new Date());
-			}
 		}
 		rdr.close();
 		for(final File file: files) {
@@ -143,7 +135,22 @@ public class mkPics {
 		return scores;
 	}
 
-
+	public void checkRecords(final qtree[] formulas, final double[] fscores) {
+		for(int i=0;i<formulas.length;++i) {
+			final qtree formi = formulas[i];
+			final double scoreV = fscores[i];
+			if(scoreV>record) {
+				record = scoreV;
+				++ri;
+				final File fi = renderNice(ri,formi);
+				System.out.println("" + ri + 
+						"\t" + formi.toString() + 
+						"\t" + scoreV +
+						"\t" + fi.getAbsolutePath() + 
+						"\t" + new Date());
+			}
+		}
+	}
 
 	public void doit() throws IOException, InterruptedException {
 		final Random rand = new Random(32588);
@@ -158,10 +165,11 @@ public class mkPics {
 		{ // get initial concepts
 			final int[] indices= { 45, 51, 161, 167, 198, 346, 512, 515 };
 			final qtree[] workSet = new qtree[indices.length];
-			for(int j=0;j<workN;++j) {
+			for(int j=0;j<indices.length;++j) {
 				workSet[j] = qtree.newTree(farchive.flist[indices[j]]);
 			}
 			final double[] scoresW = score(0,workSet);
+			checkRecords(workSet,scoresW);
 			int i = 0;
 			while(i<scores.length) {
 				for(int j=0;j<workSet.length;++j) {
@@ -183,6 +191,8 @@ public class mkPics {
 				workSet[j] = f[p1].breed(f[p2]);
 			}
 			final double[] news = score(g,workSet);
+			checkRecords(workSet,news);
+			// get into population
 			for(int j=0;j<workN;++j) {
 				for(int t=0;t<5;++t) {
 					final int v = rand.nextInt(nSlots);
