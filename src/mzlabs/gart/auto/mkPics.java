@@ -33,8 +33,7 @@ public class mkPics {
 	double record = 0.0;
 	int ri = 0;
 	final int workN = 20;
-	final int nGroups = 20;
-	final int nSlots = nGroups*workN; // mutiple of workN
+	final int nSlots = 1000;
 	final qtree[] f = new qtree[nSlots];
 	final double[] scores = new double[nSlots];
 
@@ -176,7 +175,7 @@ public class mkPics {
 					f[i] = workSet[j];
 					scores[i] = scoresW[j];
 					++i;
-					if(i>scores.length) {
+					if(i>=scores.length) {
 						break;
 					}
 				}
