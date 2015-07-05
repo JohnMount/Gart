@@ -211,7 +211,7 @@ public class mkPics {
 			final int ntry = 5;
 			for(int j=0;j<workN;++j) {
 				final double scoreJ = news[j];
-				if(scoreJ>threshold) {
+				if((scoreJ>threshold)||(scoreJ>=recordScore)) {
 					for(int t=0;t<ntry;++t) {
 						final int v = rand.nextInt(nSlots);
 						final double total = scores[v]+scoreJ;
