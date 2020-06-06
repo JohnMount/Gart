@@ -1,3 +1,7 @@
+To run:
+
+ * java -cp g4.jar mzlabs.gart.GartUi4
+
 Code (circa 1995)
 
  * https://win-vector.com/2009/06/01/what-is-genetic-art/
