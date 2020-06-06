@@ -1,8 +1,8 @@
 Code (circa 1995)
 
- * http://www.win-vector.com/blog/2009/06/what-is-genetic-art/
- * http://www.win-vector.com/blog/2015/06/neural-net-image-salad-again-with-code/
- * http://mzlabs.com/MZLabsJM/page4/page8/page8.html
+ * https://win-vector.com/2009/06/01/what-is-genetic-art/
+ * https://win-vector.com/2015/06/22/neural-net-image-salad-again-with-code/
+ * https://johnmount.github.io/mzlabs/GeneticArt/
  
 Now on Github at:
 
