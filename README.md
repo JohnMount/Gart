@@ -1,3 +1,6 @@
+Introduction video can be found here: https://youtu.be/5_mP_YWIKEY
+
+
 To run:
 
  * java -cp "Gart.jar:lib/ApacheCSV.jar:lib/commons-cli-1.2.jar:lib/jdom.jar:lib/junit-4.6.jar"  mzlabs.gart.GartUi4
