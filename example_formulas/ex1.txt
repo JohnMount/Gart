@@ -1,0 +1,1 @@
+( exp ( iexp ( mod ( iexp ( - x_iy_jx_ky ( / ( rolR x_iy_jx_ky ) ( / ( rolR ( / j ( * ( conj x_iy ) ( / ( rolR x_iy_jx_ky ) j ) ) ) ) ( isin ( isin ( / j ( * ( / x_iy_jx_ky ( / x_iy ( / ( rolR x_iy_jx_ky ) j ) ) ) ( / ( rolR x_iy_jx_ky ) ( conj ( / x_k ( / x_iy_jx_ky j ) ) ) ) ) ) ) ) ) ) ) ) ( inv x_iy_jx_ky ) ) ) )
