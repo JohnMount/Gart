@@ -1,6 +1,6 @@
 To run:
 
- * java -cp g4.jar mzlabs.gart.GartUi4
+ * java -cp "Gart.jar:lib/ApacheCSV.jar:lib/commons-cli-1.2.jar:lib/jdom.jar:lib/junit-4.6.jar"  mzlabs.gart.GartUi4
 
 Code (circa 1995)
 
