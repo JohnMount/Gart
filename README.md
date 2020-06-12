@@ -6,7 +6,7 @@ To run:
  * java -cp "Gart.jar:lib/ApacheCSV.jar:lib/commons-cli-1.2.jar:lib/jdom.jar:lib/junit-4.6.jar"  mzlabs.gart.GartUi4
  * java -cp "Gart.jar:lib/ApacheCSV.jar:lib/commons-cli-1.2.jar:lib/jdom.jar:lib/junit-4.6.jar"  mzlabs.gart.Draw -formDir example_formulas -destDir render -width 1000 -height 1000 -aaLevel 5
  
-Code (circa 1995)
+Some articles:
 
  * https://win-vector.com/2009/06/01/what-is-genetic-art/
  * https://win-vector.com/2015/06/22/neural-net-image-salad-again-with-code/
