@@ -1,4 +1,9 @@
-Introduction video can be found here: https://youtu.be/5_mP_YWIKEY
+
+
+<img src="https://johnmount.github.io/mzlabs/GeneticArt/files/page5-1019-full.jpg">
+
+Introduction video can be found here: [https://youtu.be/5_mP_YWIKEY](https://johnmount.github.io/mzlabs/GeneticArt/).
+
 
 
 To run:
