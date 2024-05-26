@@ -120,9 +120,9 @@ class QOP_tree:
         return self.q
 
 
-def r_dispatch(nd, img_shape: Tuple) -> QOP_tree:
+def r_dispatch(nd, data_shape: Tuple) -> QOP_tree:
     """Build an evaluation tree from a representation tree"""
-    q = Quaternions(img_shape)
+    q = Quaternions(data_shape)
     if isinstance(nd, OpDescr):
         return QOP_tree(op=nd,
                     q=q,
@@ -133,5 +133,5 @@ def r_dispatch(nd, img_shape: Tuple) -> QOP_tree:
     return QOP_tree(op=nd[0],
                 q=q,
                 method=getattr(q, nd[0].call_name),
-                args=[r_dispatch(nd[i], img_shape=img_shape) for i in range(1, len(nd))],
+                args=[r_dispatch(nd[i], data_shape=data_shape) for i in range(1, len(nd))],
         )
