@@ -10,10 +10,10 @@ np.seterr(divide="ignore", invalid="ignore")
 class Quaternions:
     def __init__(self, shape: Tuple[int, ...]) -> None:
         shape = tuple(shape)
-        self.e = np.zeroes(shape)
-        self.i = np.zeroes(shape)
-        self.j = np.zeroes(shape)
-        self.k = np.zeroes(shape)
+        self.e = np.zeros(shape)
+        self.i = np.zeros(shape)
+        self.j = np.zeros(shape)
+        self.k = np.zeros(shape)
 
     def new_instance(self) -> "Quaternions":
         return Quaternions(self.e.shape)

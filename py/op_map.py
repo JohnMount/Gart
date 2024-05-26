@@ -1,5 +1,10 @@
 
 from dataclasses import dataclass, field
+import re
+
+import sexpdata
+
+from quaternion import Quaternions
 
 
 op_list = (
@@ -53,8 +58,31 @@ class OpDescr:
         self.call_name = self.call_str[:self.call_str.find('(')]
         self.depends_on_coords = '(x, y, z)' in self.call_str
 
+
 # map names of call to method names and signatures
 call_map = {
-    op[0]: OpDescr(name=op[0], degree=op[1], call_str=op[2])
+    op[0].strip().lower(): OpDescr(name=op[0], degree=op[1], call_str=op[2])
     for op in op_list
 }
+
+
+def lookup_symbol(s: str) -> Quaternions:
+    s1 = s.strip().lower()
+    try:
+        return call_map[s1]
+    except KeyError:
+        pass
+    s2 = re.sub(r'[\s]*[+][\s]*', '_', s1)
+    return call_map[s2]
+
+
+def r_walk_tree(tree):
+    if isinstance(tree, sexpdata.Symbol):
+        return lookup_symbol(tree.title())
+    return tuple([r_walk_tree(nd) for nd in tree])
+
+
+def formula_to_op_tree(f: str):
+    tree = sexpdata.loads(f)
+    op_tree = r_walk_tree(tree)
+    return op_tree
