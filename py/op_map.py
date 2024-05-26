@@ -1,4 +1,6 @@
 
+from typing import Iterable, Tuple
+
 from dataclasses import dataclass, field
 import re
 
@@ -86,3 +88,50 @@ def formula_to_op_tree(f: str):
     tree = sexpdata.loads(f)
     op_tree = r_walk_tree(tree)
     return op_tree
+
+
+class QOP_tree:
+    def __init__(
+            self,
+            *,
+            op: OpDescr,
+            q: Quaternions,
+            method,
+            args: Iterable[Quaternions],
+    ):
+        self.op = op
+        self.q = q
+        self.method = method
+        self.args = tuple(args)
+    
+    def eval_tree(
+            self,
+            *,
+            x, y, z,
+    ) -> Quaternions:
+        if len(self.args) < 1:
+            if self.op.depends_on_coords:
+                self.method(x, y, z)
+            else:
+                self.method()
+        else:
+            q_args = [ai.eval_tree(x=x, y=y, z=z) for ai in self.args]
+            self.method(*q_args)
+        return self.q
+
+
+def r_dispatch(nd, img_shape: Tuple) -> QOP_tree:
+    """Build an evaluation tree from a representation tree"""
+    q = Quaternions(img_shape)
+    if isinstance(nd, OpDescr):
+        return QOP_tree(op=nd,
+                    q=q,
+                    method=getattr(q, nd.call_name),
+                    args=[],
+            )
+    assert isinstance(nd[0], OpDescr)
+    return QOP_tree(op=nd[0],
+                q=q,
+                method=getattr(q, nd[0].call_name),
+                args=[r_dispatch(nd[i], img_shape=img_shape) for i in range(1, len(nd))],
+        )

@@ -1,6 +1,7 @@
 """Genetic art system. Copyright (C) 1995-20024 John Mount (jmount@mzlabs.com)"""
 
-from typing import Tuple
+from typing import Iterable, Tuple
+
 import numpy as np
 
 
