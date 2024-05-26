@@ -1,4 +1,6 @@
 
+from dataclasses import dataclass, field
+
 
 op_list = (
     ("+", 2, "qplus(a, b)"),
@@ -36,3 +38,23 @@ op_list = (
     ("rolR", 1, "qrr(a)"),
     ("subst", 2, "set(b)"),
 )
+
+
+@dataclass
+class OpDescr:
+    """class to represent operation"""
+    name: str
+    degree: int
+    call_str: str
+    call_name: str = field(init=False)
+    depends_on_coords: bool = field(init=False)
+
+    def __post_init__(self):
+        self.call_name = self.call_str[:self.call_str.find('(')]
+        self.depends_on_coords = '(x, y, z)' in self.call_str
+
+# map names of call to method names and signatures
+call_map = {
+    op[0]: OpDescr(name=op[0], degree=op[1], call_str=op[2])
+    for op in op_list
+}
