@@ -14,10 +14,9 @@ def render_gart(
     img_width: int = 400,
     aa_scale: int = 1,
 ):
-    depth = 1
     width= aa_scale * img_width
     height = aa_scale * img_height
-    data_shape = (width, height, 1)
+    data_shape = (width, height)
     op_tree = formula_to_op_tree(formula_str)
     res = r_dispatch(op_tree, data_shape=data_shape)
     # build data tensors
@@ -30,10 +29,8 @@ def render_gart(
     z = np.zeros(data_shape)
     for xi in range(width):
         for yi in range(height):
-            for zi in range(depth):
-                x[xi][yi][zi] = x_vec[xi]
-                y[xi][yi][zi] = y_vec[yi]
-                z[xi][yi][zi] = z_vec[zi]
+                x[xi][yi] = x_vec[xi]
+                y[xi][yi] = y_vec[yi]
     res_q = res.eval_tree(x=x, y=y, z=z)
     # define image shape
     image_shape = (width, height, 3)
@@ -41,9 +38,9 @@ def render_gart(
     img_tensor = np.zeros(image_shape)
     for xi in range(width):
         for yi in range(height):
-            img_tensor[xi][yi][0] = res_q.i[xi][yi][0]
-            img_tensor[xi][yi][1] = res_q.j[xi][yi][0]
-            img_tensor[xi][yi][2] = res_q.k[xi][yi][0]
+            img_tensor[xi][yi][0] = res_q.i[xi][yi]
+            img_tensor[xi][yi][1] = res_q.j[xi][yi]
+            img_tensor[xi][yi][2] = res_q.k[xi][yi]
     # move to 0 to 255 integers
     img_tensor = np.maximum(-100, img_tensor)
     img_tensor = np.minimum(100, img_tensor)
