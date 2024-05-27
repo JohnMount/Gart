@@ -16,7 +16,7 @@ def mk_img_job(i):
     formula_str = farchive[i]
     img = render_gart(
         formula_str,
-        img_height=1440,
+        img_height=1600,
         img_width=2560,
         aa_scale=2,
     )

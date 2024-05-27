@@ -101,10 +101,11 @@ def render_gart(
     if buggy_crunch:
         out_of_range = (img_tensor>30.0) | (img_tensor<-30.0)
         img_tensor[out_of_range] = 0
-    else:
-        img_tensor = np.maximum(-30, img_tensor)
-        img_tensor = np.minimum(30, img_tensor)
+    img_tensor = np.maximum(-30, img_tensor)
+    img_tensor = np.minimum(30, img_tensor)
     img_tensor = np.round(256 / (1 + np.exp(-img_tensor)))
+    if buggy_crunch:
+        img_tensor[out_of_range] = 0
     img_tensor = np.maximum(img_tensor, 0)
     img_tensor = np.minimum(img_tensor, 255)
     img = Image.new("RGB", size=(width, height))
