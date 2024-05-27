@@ -16,8 +16,8 @@ def mk_img_job(i):
     formula_str = farchive[i]
     img = render_gart(
         formula_str,
-        img_height=225,
-        img_width=400,
+        img_height=1440,
+        img_width=2560,
         aa_scale=2,
     )
     img.save(f"{img_dir}/{i:05d}.jpeg")
@@ -36,9 +36,11 @@ if __name__ == "__main__":
         if formula_str not in f_set:
             f_set.add(formula_str)
             tasks.append(i)
-    nproc = cpu_count() - 1
-    if nproc < 1:
-        nproc = 1
-    with Pool(processes=nproc) as pool:
-        pool.map(mk_img_job, tasks)
+    nproc = 2
+    if nproc > 1:
+        with Pool(processes=nproc) as pool:
+            pool.map(mk_img_job, tasks)
+    else:
+        for task in tasks:
+            mk_img_job(task)
     print("done")
