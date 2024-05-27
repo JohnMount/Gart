@@ -55,7 +55,7 @@ if __name__ == "__main__":
             f_set.add(formula_str)
             tasks.append(i)
     # choose degree of parallelism
-    nproc = np.max([1, cpu_count() - 1])
+    nproc = np.max([1, cpu_count() - 3])
     # break tasks into sub-lists
     if (nproc > 1) and (len(tasks) > 1):
         n_lists = np.min([len(tasks), np.max([nproc, int(len(tasks) / (4 * nproc))])])
