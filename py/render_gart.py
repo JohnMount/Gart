@@ -92,6 +92,7 @@ def build_x_y_z(data_shape: Tuple[int, int, ...]):
 
 
 def crunch_range(vec, *, buggy_crunch:bool = True):
+    vec = vec.copy()
     # move to 0 to 255 integers
     if buggy_crunch:
         out_of_range = (vec>30.0) | (vec<-30.0)

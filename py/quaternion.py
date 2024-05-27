@@ -41,6 +41,7 @@ class Quaternions:
 
     # sets this fields to a
     def set(self, a: "Quaternions") -> None:
+        assert self.shape == a.shape
         self.e = a.e.copy()
         self.i = a.i.copy()
         self.j = a.j.copy()
