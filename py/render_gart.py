@@ -58,6 +58,53 @@ def r_dispatch(nd, data_shape: Tuple) -> QOP_tree:
         )
 
 
+x_y_z_cache = dict()
+
+def build_x_y_z(data_shape: Tuple[int, int, ...]):
+    try:
+        return x_y_z_cache[data_shape]
+    except KeyError:
+        pass
+    # build data tensors
+    width = data_shape[0]
+    height = data_shape[1]
+    min_port = np.min([width, height])
+    x_vec = np.linspace(start=-0.5 * (width/min_port), stop=0.5 * (width/min_port), num=width)
+    y_vec = np.linspace(start=-0.5 * (height/min_port), stop=0.5 * (height/min_port), num=height)
+    # fuzzcoords
+    eps = 0.1 / max(width, height)
+    rng = np.random.default_rng(2024)
+    x_vec = x_vec + rng.uniform(-eps, eps, x_vec.shape[0])
+    y_vec = y_vec + rng.uniform(-eps, eps, y_vec.shape[0])
+    # convert shape
+    x = np.zeros(data_shape)
+    y = np.zeros(data_shape)
+    z = np.zeros(data_shape)
+    for xi in range(width):
+        for yi in range(height):
+                x[xi][yi] = x_vec[xi]
+                y[xi][yi] = y_vec[yi]
+    # cache and return
+    if len(x_y_z_cache) > 5:
+        x_y_z_cache.clear()
+    x_y_z_cache[data_shape] = (x, y, z)
+    return x, y, z
+
+
+def crunch_range(vec, *, buggy_crunch:bool = True):
+    # move to 0 to 255 integers
+    if buggy_crunch:
+        out_of_range = (vec>30.0) | (vec<-30.0)
+        vec[out_of_range] = 0
+    vec = np.maximum(-30, vec)
+    vec = np.minimum(30, vec)
+    vec = np.round(256 / (1 + np.exp(-vec)))
+    if buggy_crunch:
+        vec[out_of_range] = 0
+    vec = np.maximum(vec, 0)
+    vec = np.minimum(vec, 255)
+    return vec
+
 
 def render_gart(
     formula_str: str,
@@ -72,47 +119,22 @@ def render_gart(
     data_shape = (width, height)
     op_tree = formula_to_op_tree(formula_str)
     res = r_dispatch(op_tree, data_shape=data_shape)
-    # build data tensors
-    min_port = np.min([width, height])
-    x_vec = np.linspace(start=-0.5 * (width/min_port), stop=0.5 * (width/min_port), num=width)
-    y_vec = np.linspace(start=-0.5 * (height/min_port), stop=0.5 * (height/min_port), num=height)
-    x = np.zeros(data_shape)
-    y = np.zeros(data_shape)
-    z = np.zeros(data_shape)
-    for xi in range(width):
-        for yi in range(height):
-                x[xi][yi] = x_vec[xi]
-                y[xi][yi] = y_vec[yi]
-    del x_vec
-    del y_vec
+    x, y, z = build_x_y_z(data_shape)
     res_q = res.eval_tree(x=x, y=y, z=z)
     del res
-    # define image shape
-    image_shape = (width, height, 3)
     # copy result into image
-    img_tensor = np.zeros(image_shape)
-    for xi in range(width):
-        for yi in range(height):
-            img_tensor[xi][yi][0] = res_q.i[xi][yi]
-            img_tensor[xi][yi][1] = res_q.j[xi][yi]
-            img_tensor[xi][yi][2] = res_q.k[xi][yi]
+    i_values = crunch_range(res_q.i)
+    j_values = crunch_range(res_q.j)
+    k_values = crunch_range(res_q.k)
     del res_q
-    # move to 0 to 255 integers
-    if buggy_crunch:
-        out_of_range = (img_tensor>30.0) | (img_tensor<-30.0)
-        img_tensor[out_of_range] = 0
-    img_tensor = np.maximum(-30, img_tensor)
-    img_tensor = np.minimum(30, img_tensor)
-    img_tensor = np.round(256 / (1 + np.exp(-img_tensor)))
-    if buggy_crunch:
-        img_tensor[out_of_range] = 0
-    img_tensor = np.maximum(img_tensor, 0)
-    img_tensor = np.minimum(img_tensor, 255)
     img = Image.new("RGB", size=(width, height))
-    pixels = []
+    pixels = [(0,0,0)] * (width * height)
+    idx = 0
     for yi in range(height):
         for xi in range(width):
-            pixels.append((int(img_tensor[xi][yi][0]), int(img_tensor[xi][yi][1]), int(img_tensor[xi][yi][2])))
+            pixels[idx] = (int(i_values[xi][yi]), int(j_values[xi][yi]), int(k_values[xi][yi]))
+            idx = idx + 1
+    assert idx == len(pixels)
     img.putdata(pixels)
     if aa_scale > 1:
         img = img.resize((img_width, img_height))
