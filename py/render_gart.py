@@ -12,7 +12,8 @@ def render_gart(
     *,
     img_height: int = 225,
     img_width: int = 400,
-    aa_scale: int = 1,
+    aa_scale: int = 2,
+    buggy_crunch:bool = True,
 ):
     width= aa_scale * img_width
     height = aa_scale * img_height
@@ -42,8 +43,12 @@ def render_gart(
             img_tensor[xi][yi][1] = res_q.j[xi][yi]
             img_tensor[xi][yi][2] = res_q.k[xi][yi]
     # move to 0 to 255 integers
-    img_tensor = np.maximum(-100, img_tensor)
-    img_tensor = np.minimum(100, img_tensor)
+    if buggy_crunch:
+        out_of_range = (img_tensor>30.0) | (img_tensor<-30.0)
+        img_tensor[out_of_range] = 0
+    else:
+        img_tensor = np.maximum(-30, img_tensor)
+        img_tensor = np.minimum(30, img_tensor)
     img_tensor = np.round(256 / (1 + np.exp(-img_tensor)))
     img_tensor = np.maximum(img_tensor, 0)
     img_tensor = np.minimum(img_tensor, 255)
