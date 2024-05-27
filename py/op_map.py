@@ -1,5 +1,6 @@
 
 from typing import Iterable, Tuple
+import numbers
 
 from dataclasses import dataclass, field
 import re
@@ -69,7 +70,7 @@ call_map = {
 
 
 def lookup_symbol(s: str) -> Quaternions:
-    s1 = s.strip().lower()
+    s1 = str(s).strip().lower()
     try:
         return call_map[s1]
     except KeyError:
@@ -81,6 +82,10 @@ def lookup_symbol(s: str) -> Quaternions:
 def r_walk_tree(tree):
     if isinstance(tree, sexpdata.Symbol):
         return lookup_symbol(tree.title())
+    if isinstance(tree, str):
+        return lookup_symbol(tree)
+    if isinstance(tree, numbers.Number):
+        return lookup_symbol(str(tree))
     return tuple([r_walk_tree(nd) for nd in tree])
 
 
