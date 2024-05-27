@@ -9,15 +9,18 @@ np.seterr(divide="ignore", invalid="ignore")
 
 
 class Quaternions:
+    def clear(self):
+        self.e = None
+        self.i = None
+        self.j = None
+        self.k = None
+
     def __init__(self, shape: Tuple[int, ...]) -> None:
-        shape = tuple(shape)
-        self.e = np.zeros(shape)
-        self.i = np.zeros(shape)
-        self.j = np.zeros(shape)
-        self.k = np.zeros(shape)
+        self.shape = tuple(shape)
+        self.clear()
 
     def new_instance(self) -> "Quaternions":
-        return Quaternions(self.e.shape)
+        return Quaternions(self.shape)
 
     def normsq(self) -> np.array:
         return self.e * self.e + self.i * self.i + self.j * self.j + self.k * self.k
@@ -132,91 +135,91 @@ class Quaternions:
     # constant yielding ops
 
     def qc1(self) -> None:
-        self.e = np.zeros(self.e.shape) + 1.0
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + 1.0
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     def qc2(self) -> None:
-        self.e = np.zeros(self.e.shape)
-        self.i = np.zeros(self.e.shape) + 1.0
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape)
+        self.i = np.zeros(self.shape) + 1.0
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     def qc3(self) -> None:
-        self.e = np.zeros(self.e.shape)
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape) + 1.0
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape)
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape) + 1.0
+        self.k = np.zeros(self.shape)
 
     def qc4(self) -> None:
-        self.e = np.zeros(self.e.shape)
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape) + 1.0
+        self.e = np.zeros(self.shape)
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape) + 1.0
 
     def qc5(self) -> None:
-        self.e = np.zeros(self.e.shape) + 1.61803398875  # golden ratio
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + 1.61803398875  # golden ratio
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     # variable entry points
 
     def qstd(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape)
-        self.i = np.zeros(self.e.shape) + x
-        self.j = np.zeros(self.e.shape) + y
-        self.k = np.zeros(self.e.shape) + z
+        self.e = np.zeros(self.shape)
+        self.i = np.zeros(self.shape) + x
+        self.j = np.zeros(self.shape) + y
+        self.k = np.zeros(self.shape) + z
 
     def qcx(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + x
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + x
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     def qcy(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + y
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + y
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     # extras to help close tree and make eqns reactive
     def qcx1(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + x
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape) + 1.0 + z
+        self.e = np.zeros(self.shape) + x
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape) + 1.0 + z
 
     def qcy1(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + y
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape) + 1.0 + z
+        self.e = np.zeros(self.shape) + y
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape) + 1.0 + z
 
     def qcx2(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + x
-        self.i = np.zeros(self.e.shape) + 1.0 + z
-        self.j = np.zeros(self.e.shape)
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + x
+        self.i = np.zeros(self.shape) + 1.0 + z
+        self.j = np.zeros(self.shape)
+        self.k = np.zeros(self.shape)
 
     def qcy2(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + y
-        self.i = np.zeros(self.e.shape)
-        self.j = np.zeros(self.e.shape) + 1.0 + z
-        self.k = np.zeros(self.e.shape)
+        self.e = np.zeros(self.shape) + y
+        self.i = np.zeros(self.shape)
+        self.j = np.zeros(self.shape) + 1.0 + z
+        self.k = np.zeros(self.shape)
 
     def qcxy(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + x
-        self.i = np.zeros(self.e.shape) + y
-        self.j = np.zeros(self.e.shape) + z
-        self.k = np.zeros(self.e.shape) + z
+        self.e = np.zeros(self.shape) + x
+        self.i = np.zeros(self.shape) + y
+        self.j = np.zeros(self.shape) + z
+        self.k = np.zeros(self.shape) + z
 
     def qcxy2(self, x, y, z) -> None:
-        self.e = np.zeros(self.e.shape) + x
-        self.i = np.zeros(self.e.shape) + y
-        self.j = np.zeros(self.e.shape) + x + z
-        self.k = np.zeros(self.e.shape) + y + z
+        self.e = np.zeros(self.shape) + x
+        self.i = np.zeros(self.shape) + y
+        self.j = np.zeros(self.shape) + x + z
+        self.k = np.zeros(self.shape) + y + z
 
     # coordinate independent functions
     # not interesting from the Quaternions point of view- but since we

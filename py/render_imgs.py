@@ -36,7 +36,9 @@ if __name__ == "__main__":
         if formula_str not in f_set:
             f_set.add(formula_str)
             tasks.append(i)
-    nproc = 2
+    nproc = cpu_count() - 1
+    if nproc < 1:
+        nproc = 1
     if nproc > 1:
         with Pool(processes=nproc) as pool:
             pool.map(mk_img_job, tasks)
